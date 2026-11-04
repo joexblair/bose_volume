@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Bose Volume</string>
+    <string name="widget_description">Volume and mute for your Bose speaker or soundbar</string>
+    <string name="step1">1. Bose account</string>
+    <string name="step2">2. Speaker</string>
+    <string name="step3">3. Volume step per tap</string>
+    <string name="step4">4. Try it</string>
+    <string name="signed_in">Signed in to your Bose account.</string>
+    <string name="signed_out">Sign in with the Bose account your speaker is set up with.</string>
+    <string name="sign_in">Sign in</string>
+    <string name="sign_out">Sign out</string>
+    <string name="no_speaker">No speaker selected</string>
+    <string name="discover">Find speakers on Wi‑Fi</string>
+    <string name="searching">Searching…</string>
+    <string name="manual_hint">…or enter IP address</string>
+    <string name="use">Use</string>
+    <string name="save_step">Save</string>
+    <string name="mute">Mute</string>
+    <string name="volume_up">Volume up</string>
+    <string name="volume_down">Volume down</string>
+    <string name="widget_hint">Then long-press your home screen → Widgets → Bose Volume. Tap the number to refresh, the speaker name to open this screen.</string>
+</resources>
