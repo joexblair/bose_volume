@@ -188,7 +188,7 @@ class BoseSpeaker private constructor(
             token: String,
             deviceId: String? = null,
             port: Int = PORT,
-            client: OkHttpClient = speakerHttpClient(),
+            client: OkHttpClient = sharedSpeakerClient,
             timeoutMs: Long = 6_000,
         ): BoseSpeaker {
             val listener = Listener()
@@ -207,6 +207,9 @@ class BoseSpeaker private constructor(
                 throw if (e is BoseConnectionException) e else BoseConnectionException("Couldn't reach speaker at $host: ${e.message}", e)
             }
         }
+
+        /** Reused across commands so each tap doesn't rebuild the TLS setup and thread pools. */
+        val sharedSpeakerClient: OkHttpClient by lazy { speakerHttpClient() }
 
         /**
          * OkHttp client for the speaker only. Speakers present a self-signed certificate for their

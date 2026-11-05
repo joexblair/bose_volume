@@ -55,6 +55,7 @@ class LoginActivity : ComponentActivity() {
         lifecycleScope.launch {
             try {
                 Bose.auth(this@LoginActivity).completeSignIn(code, pkce)
+                TokenHeartbeatWorker.schedule(this@LoginActivity)
                 setResult(RESULT_OK)
             } catch (e: Exception) {
                 Toast.makeText(this@LoginActivity, "Sign-in failed: ${e.message}", Toast.LENGTH_LONG).show()

@@ -96,10 +96,13 @@ class BoseAuth(
         exchangeIdToken(b2c.string("id_token"))
     }
 
-    /** A control token valid for at least another minute, refreshing it if needed. */
-    suspend fun controlToken(forceRefresh: Boolean = false): String = lock.withLock {
+    /**
+     * A control token valid for at least another [minValidSeconds], refreshing it if needed.
+     * A background heartbeat calls this with a large margin so taps rarely have to wait for it.
+     */
+    suspend fun controlToken(forceRefresh: Boolean = false, minValidSeconds: Long = 60): String = lock.withLock {
         val cached = store.get(KEY_CONTROL_TOKEN)
-        if (!forceRefresh && cached != null && jwtExpiry(cached) > clock() + 60) return cached
+        if (!forceRefresh && cached != null && jwtExpiry(cached) > clock() + minValidSeconds) return cached
 
         val refresh = store.get(KEY_B2C_REFRESH) ?: throw NotSignedInException()
         val b2c = try {

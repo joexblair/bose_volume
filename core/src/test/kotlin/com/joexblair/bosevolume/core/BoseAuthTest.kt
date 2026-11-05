@@ -89,6 +89,18 @@ class BoseAuthTest {
         assertEquals("r2", store.get(BoseAuth.KEY_B2C_REFRESH))
     }
 
+    @Test fun `heartbeat margin refreshes early, normal calls don't`() = runBlocking {
+        val t1 = auth.completeSignIn("c", BoseAuth.Pkce.generate()) // expires at now + 3600
+        now += 3600 - 600 // 10 minutes left
+        assertEquals(t1, auth.controlToken()) // still fine for a tap
+        assertEquals(2, requests.size)
+        val t2 = auth.controlToken(minValidSeconds = 20 * 60) // heartbeat wants 20 minutes
+        assertTrue(t2 != t1)
+        assertEquals(4, requests.size)
+        assertEquals(t2, auth.controlToken(minValidSeconds = 20 * 60)) // now fresh, no new call
+        assertEquals(4, requests.size)
+    }
+
     @Test fun `revoked refresh token signs out`() = runBlocking {
         auth.completeSignIn("c", BoseAuth.Pkce.generate())
         refreshAllowed = false

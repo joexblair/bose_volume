@@ -46,6 +46,12 @@ The app shows Bose's real sign-in page in a WebView and catches the `bosemusic:/
 your password never passes through this app's code. It stores the B2C refresh token, and when
 the control token expires it gets a new one without asking you.
 
+Renewing the token takes two round-trips to Bose's servers. If that happened on a tap, the first
+tap after a quiet spell would be slow. To avoid that, a **token heartbeat** (WorkManager, every
+~15 minutes, only while signed in and online) renews the token whenever it has less than 25
+minutes left, so taps go straight to the speaker. Android may delay the heartbeat while the phone
+is in deep sleep (Doze), so the very first tap after a long idle can still need a renewal.
+
 **3. Local control.** `wss://<speaker-ip>:8082/?product=…` with WebSocket sub-protocol `eco2`
 (the speaker uses a self-signed certificate). Messages look like this:
 

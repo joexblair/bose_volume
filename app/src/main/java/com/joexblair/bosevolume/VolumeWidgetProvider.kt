@@ -19,6 +19,7 @@ import kotlinx.coroutines.withTimeout
 class VolumeWidgetProvider : AppWidgetProvider() {
 
     override fun onUpdate(context: Context, manager: AppWidgetManager, ids: IntArray) {
+        TokenHeartbeatWorker.sync(context)
         run(context) { it.get() }
     }
 

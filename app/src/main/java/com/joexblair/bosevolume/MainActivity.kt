@@ -43,7 +43,11 @@ class MainActivity : ComponentActivity() {
 
         signIn.setOnClickListener {
             val auth = Bose.auth(this)
-            if (auth.isSignedIn) { auth.signOut(); refreshLabels() }
+            if (auth.isSignedIn) {
+                auth.signOut()
+                TokenHeartbeatWorker.cancel(this)
+                refreshLabels()
+            }
             else startActivity(Intent(this, LoginActivity::class.java))
         }
         view<Button>(R.id.discover).setOnClickListener { discover() }
@@ -71,6 +75,7 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         refreshLabels()
+        TokenHeartbeatWorker.sync(this)
         if (Bose.auth(this).isSignedIn && Bose.speaker(this) != null) act { it.get() }
     }
 
