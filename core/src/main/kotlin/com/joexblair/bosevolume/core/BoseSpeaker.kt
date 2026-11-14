@@ -130,11 +130,6 @@ class BoseSpeaker private constructor(
 
     suspend fun toggleMute(): Volume = setMuted(!getVolume().muted)
 
-    /** Standby (false) or on (true), same as the power button in the Bose Music app. */
-    suspend fun setPower(on: Boolean) {
-        request("/system/power/control", "POST", buildJsonObject { put("power", if (on) "ON" else "OFF") })
-    }
-
     override fun close() {
         socket.close(1000, null)
     }

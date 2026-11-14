@@ -1,6 +1,5 @@
 package com.joexblair.bosevolume
 
-import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -10,9 +9,7 @@ import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.activity.ComponentActivity
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.joexblair.bosevolume.core.BoseSpeaker
 import com.joexblair.bosevolume.core.VolumeController
 import kotlinx.coroutines.launch
@@ -66,23 +63,6 @@ class MainActivity : ComponentActivity() {
         view<Button>(R.id.down).setOnClickListener { act { it.change(-Bose.step(this)) } }
         view<Button>(R.id.up).setOnClickListener { act { it.change(+Bose.step(this)) } }
         view<Button>(R.id.mute).setOnClickListener { act { it.toggleMute() } }
-        val powerStatus = view<TextView>(R.id.power_status)
-        val powerButton = view<Button>(R.id.power_cycle)
-        powerButton.setOnClickListener {
-            AlertDialog.Builder(this)
-                .setMessage(R.string.power_cycle_confirm)
-                .setPositiveButton(R.string.power_cycle) { _, _ -> PowerCycle.start(this) }
-                .setNegativeButton(android.R.string.cancel, null)
-                .show()
-        }
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                PowerCycle.status.collect {
-                    powerStatus.text = it.orEmpty()
-                    powerButton.isEnabled = !PowerCycle.running
-                }
-            }
-        }
         seek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(bar: SeekBar, value: Int, fromUser: Boolean) {}
             override fun onStartTrackingTouch(bar: SeekBar) {}

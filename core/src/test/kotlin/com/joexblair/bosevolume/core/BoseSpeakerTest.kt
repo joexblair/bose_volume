@@ -56,26 +56,6 @@ class BoseSpeakerTest {
         }
     }
 
-    @Test fun `power cycle sends OFF, waits, then ON`() = runBlocking {
-        val enc = java.util.Base64.getUrlEncoder().withoutPadding()
-        val token = enc.encodeToString("{}".toByteArray()) + "." +
-            enc.encodeToString("""{"exp":9999999999}""".toByteArray()) + ".s"
-        FakeSpeaker(acceptedToken = token).use { fake ->
-            val auth = BoseAuth(InMemoryTokenStore().apply {
-                put(BoseAuth.KEY_B2C_REFRESH, "r")
-                put(BoseAuth.KEY_CONTROL_TOKEN, token)
-            })
-            val controller = VolumeController(auth) { t -> BoseSpeaker.connect(fake.host, t, port = fake.port) }
-            val ticks = mutableListOf<Int>()
-            val started = System.currentTimeMillis()
-            controller.powerCycle(2_000) { ticks += it }
-            val elapsed = System.currentTimeMillis() - started
-            assertEquals(listOf("OFF", "ON"), fake.powerLog)
-            assertEquals(listOf(2, 1, 0), ticks)
-            assertTrue(elapsed >= 2_000, "waited only $elapsed ms")
-        }
-    }
-
     @Test fun `bad token raises 401`() = runBlocking {
         FakeSpeaker().use { fake ->
             connect(fake, token = "nope").use { s ->

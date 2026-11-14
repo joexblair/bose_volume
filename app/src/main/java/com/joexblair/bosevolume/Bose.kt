@@ -9,7 +9,6 @@ import com.joexblair.bosevolume.core.VolumeController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
@@ -57,39 +56,6 @@ object Bose {
             BoseSpeaker.connect(speaker.host, token, speaker.guid)
         }
         return commandLock.withLock { op(controller) }
-    }
-}
-
-/** Speaker power-cycle progress, shared so the setup screen can show it even after reopening. */
-object PowerCycle {
-    const val OFF_MILLIS = 30_000L
-
-    /** null = idle; otherwise a status line to show. */
-    val status = kotlinx.coroutines.flow.MutableStateFlow<String?>(null)
-
-    @Volatile var running = false
-        private set
-
-    fun start(context: Context) {
-        if (running) return
-        val app = context.applicationContext
-        running = true
-        status.value = "Switching speaker to standby…"
-        Bose.scope.launch {
-            val result = try {
-                Bose.command(app) { c ->
-                    c.powerCycle(OFF_MILLIS) { left ->
-                        status.value = if (left > 0) "Standby: powering back on in ${left}s" else "Powering on…"
-                    }
-                }
-                "Speaker power-cycled"
-            } catch (e: Exception) {
-                "Power cycle failed: ${e.message ?: e.javaClass.simpleName}"
-            }
-            running = false // before publishing, so the screen re-enables the button
-            status.value = result
-            VolumeWidgetProvider.requestRefresh(app)
-        }
     }
 }
 
