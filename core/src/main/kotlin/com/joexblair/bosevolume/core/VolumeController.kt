@@ -1,5 +1,7 @@
 package com.joexblair.bosevolume.core
 
+import kotlinx.coroutines.delay
+
 /**
  * One-shot volume operations against a configured speaker: get a valid control token, open the
  * socket, run [block], close. A rejected token (401, not the clock-skew case) is refreshed once.
@@ -27,4 +29,21 @@ class VolumeController(
     suspend fun change(delta: Int) = withSpeaker { it.changeVolume(delta) }
     suspend fun set(value: Int) = withSpeaker { it.setVolume(value) }
     suspend fun toggleMute() = withSpeaker { it.toggleMute() }
+
+    /**
+     * Standby, wait [offMillis], power on. Uses a new connection for each step, because the
+     * speaker may drop the socket while it goes into standby.
+     */
+    suspend fun powerCycle(offMillis: Long, onProgress: (secondsLeft: Int) -> Unit = {}) {
+        withSpeaker { it.setPower(false) }
+        var left = offMillis
+        while (left > 0) {
+            onProgress(((left + 999) / 1000).toInt())
+            val step = minOf(1_000L, left)
+            delay(step)
+            left -= step
+        }
+        onProgress(0)
+        withSpeaker { it.setPower(true) }
+    }
 }

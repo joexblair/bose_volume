@@ -17,6 +17,10 @@
     <string name="use">Use</string>
     <string name="save_step">Save</string>
     <string name="mute">Mute</string>
+    <string name="step5">5. Fix stuttering</string>
+    <string name="power_cycle">Power cycle speaker</string>
+    <string name="power_cycle_hint">Puts the speaker in standby for 30 seconds, then turns it back on. Playback stops.</string>
+    <string name="power_cycle_confirm">Power cycle the speaker? Playback will stop for about 30 seconds.</string>
     <string name="volume_up">Volume up</string>
     <string name="volume_down">Volume down</string>
     <string name="widget_hint">Then long-press your home screen → Widgets → Bose Volume. Tap the number to refresh, the speaker name to open this screen.</string>

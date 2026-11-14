@@ -16,6 +16,11 @@ Music Amplifier, …) directly over your Wi‑Fi. You don't have to open the Bos
 * **speaker icon** toggles mute
 * **number** refreshes, **speaker name** opens settings
 
+The settings screen also has **Power cycle speaker**. It sends the speaker to standby
+(`POST /system/power/control {"power":"OFF"}`), waits 30 seconds, then switches it back on. That
+can help when the speaker starts stuttering after several devices have used Spotify Connect.
+It is a software standby, not a real power cut, so it may not clear every fault.
+
 ## Install
 
 Grab the APK from the **Build** GitHub Actions run (artifact `bose-volume-debug-apk`), or build it

@@ -29,6 +29,7 @@ class FakeSpeaker(
     val received = mutableListOf<JsonObject>()
     var subprotocol: String? = null
     var notBeforeFailures = 0
+    val powerLog = mutableListOf<String>()
 
     init {
         val host = InetAddress.getByName("localhost").canonicalHostName
@@ -95,6 +96,10 @@ class FakeSpeaker(
                     b["value"]?.let { volume = it.jsonPrimitive.int }
                     b["muted"]?.let { muted = it.jsonPrimitive.boolean }
                     reply(200, volumeBody())
+                }
+                "/system/power/control" to "POST" -> {
+                    synchronized(powerLog) { powerLog += msg["body"]!!.jsonObject["power"]!!.jsonPrimitive.content }
+                    reply(200, JsonObject(emptyMap()))
                 }
                 else -> reply(404, JsonObject(emptyMap()), "unknown resource")
             }
